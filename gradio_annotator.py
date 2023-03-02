@@ -2,7 +2,6 @@ import gradio as gr
 
 from annotator.util import resize_image, HWC3
 
-
 model_canny = None
 
 
@@ -144,7 +143,6 @@ with block:
             gallery = gr.Gallery(label="Generated images", show_label=False).style(height="auto")
     run_button.click(fn=openpose, inputs=[input_image, resolution, hand], outputs=[gallery])
 
-
     with gr.Row():
         gr.Markdown("## Uniformer Segmentation")
     with gr.Row():
@@ -156,5 +154,4 @@ with block:
             gallery = gr.Gallery(label="Generated images", show_label=False).style(height="auto")
     run_button.click(fn=uniformer, inputs=[input_image, resolution], outputs=[gallery])
 
-
-block.launch(server_name='0.0.0.0')
+block.launch(server_name='0.0.0.0', share=True, server_port=7860)
