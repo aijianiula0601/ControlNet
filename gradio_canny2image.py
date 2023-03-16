@@ -42,6 +42,7 @@ def process(input_image, prompt, a_prompt, n_prompt, num_samples, image_resoluti
         if config.save_memory:
             model.low_vram_shift(is_diffusing=False)
 
+        # model.get_learned_conditioning([prompt + ', ' + a_prompt]  --- shape=[b,t,dim]=[1,77,768]
         cond = {"c_concat": [control],
                 "c_crossattn": [model.get_learned_conditioning([prompt + ', ' + a_prompt] * num_samples)]}
         un_cond = {"c_concat": None if guess_mode else [control],
@@ -100,4 +101,4 @@ with block:
            scale, seed, eta, low_threshold, high_threshold]
     run_button.click(fn=process, inputs=ips, outputs=[result_gallery])
 
-block.launch(server_name='0.0.0.0', share=True, server_port=7861)
+block.launch(server_name='0.0.0.0', share=True, server_port=7863)
