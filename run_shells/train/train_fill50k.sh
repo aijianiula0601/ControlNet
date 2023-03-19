@@ -41,12 +41,14 @@ resume_path=${sd_ini_file}
 batch_size=4
 logger_freq=300
 cldm_config_file="$(pwd)/models/cldm_v15.yaml"
-num_gpu=1
+num_gpu=2
 num_workers=0
 prompt_file="${dataset_base_dir}/prompt.json"
 data_dir=${dataset_base_dir}
+default_root_dir=${train_out_dir}
+process_name="controlnet_fill50k"
 
-CUDA_VISIBLE_DEVICES=3 \
+CUDA_VISIBLE_DEVICES=2,3 \
   python -u tutorial_train.py \
   ${resume_path} \
   ${batch_size} \
@@ -55,4 +57,6 @@ CUDA_VISIBLE_DEVICES=3 \
   ${num_gpu} \
   ${num_workers} \
   ${prompt_file} \
-  ${data_dir}
+  ${data_dir} \
+  ${default_root_dir} \
+  ${process_name}

@@ -1,4 +1,4 @@
-from share import *
+import setproctitle
 import sys
 import pytorch_lightning as pl
 from torch.utils.data import DataLoader
@@ -15,9 +15,13 @@ num_gpu = int(sys.argv[5])
 num_workers = int(sys.argv[6])
 prompt_file = sys.argv[7]
 data_dir = sys.argv[8]
+default_root_dir = sys.argv[9]
+process_name = sys.argv[10]
 learning_rate = 1e-5
 sd_locked = True
 only_mid_control = False
+
+setproctitle.setproctitle(process_name)
 
 # First use cpu to load models. Pytorch Lightning will automatically move it to GPUs.
 model = create_model(cldm_config_file).cpu()
@@ -30,7 +34,12 @@ model.only_mid_control = only_mid_control
 dataset = MyDataset(prompt_file, data_dir)
 dataloader = DataLoader(dataset, num_workers=num_workers, batch_size=batch_size, shuffle=True)
 logger = ImageLogger(batch_frequency=logger_freq)
-trainer = pl.Trainer(gpus=num_gpu, precision=32, callbacks=[logger])
+trainer = pl.Trainer(accelerator="gpu",
+                     devices=num_gpu,
+                     strategy="ddp",
+                     precision=32,
+                     callbacks=[logger],
+                     default_root_dir=default_root_dir)
 
 # Train!
 trainer.fit(model, dataloader)
